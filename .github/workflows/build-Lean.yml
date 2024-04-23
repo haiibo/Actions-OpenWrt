@@ -9,12 +9,12 @@ on:
         type: choice
         options: [ x86_64, r1-plus-lts, newifi-d2, asus_rt-n16, phicomm_k2p, armvirt-64-default, r4s, r2s, r2c ]
 
-      version:
-        description: '选择要生成版本：'
-        default: 'plus'
-        required: true
-        type: choice
-        options: [ pure, plus ]
+      # version:
+      #   description: '选择要生成版本：'
+      #   default: 'plus'
+      #   required: true
+      #   type: choice
+      #   options: [ pure, plus ]
 
       ip:
         description: '设置web登录IP：'
@@ -41,6 +41,7 @@ on:
         required: false
 
 env:
+  TZ: Asia/Shanghai
   REPO_FLODER: 'lede'
   REPO_BRANCH: 'master'
   UPLOAD_RELEASE: true
@@ -54,7 +55,7 @@ jobs:
   lean_openwrt:
     runs-on: ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id
-    name: coolsnowwolf-openwrt-${{github.event.inputs.target}}-${{github.event.inputs.version}}
+    name: coolsnowwolf-openwrt-${{github.event.inputs.target}}
 
     permissions:
       contents: write
@@ -62,7 +63,7 @@ jobs:
     env:
       IP: ${{github.event.inputs.ip}}
       DEPENDS: ${{github.event.inputs.depends}}
-      VERSION: ${{github.event.inputs.version}}
+      # VERSION: ${{github.event.inputs.version}}
       PARTSIZE: ${{github.event.inputs.partsize}}
       FREE_DISK: ${{github.event.inputs.free_disk}}
       TARGET_DEVICE: ${{github.event.inputs.target}}
@@ -244,7 +245,7 @@ jobs:
         du -h --max-depth=1 ./staging_dir
         du -h --max-depth=1 ./ --exclude=bin --exclude=build_dir --exclude=staging_dir --exclude=bin
         ls bin/targets/*/*/
-        sf=${CACHE_NAME%%-*}-${REPO_BRANCH#*-}-$(TZ=UTC-8 date +%m-%d)${VERSION:=-min}
+        sf=${CACHE_NAME%%-*}-${REPO_BRANCH#*-}-$(TZ=UTC-8 date +%m-%d)
         ARCH=`awk -F'"' '/ARCH_PACKAGES/{print $2}' .config`
         [[ $FIRMWARE_TYPE ]] && cp -v $(find bin/targets/ -type f -name "*${FIRMWARE_TYPE}*") ../firmware && echo "upload_firmware=true" >>$GITHUB_ENV || true
         tar -zcPf ../firmware/$sf-$ARCH-packages.tar.gz bin/packages/ && echo "upload_packages=true" >>$GITHUB_ENV || true
