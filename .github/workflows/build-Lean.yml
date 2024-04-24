@@ -224,7 +224,7 @@ jobs:
       run: cd $REPO_FLODER && make -j$(nproc) || make -j1 V=s
 
     - name: 上传 Bin
-      uses: actions/upload-artifact@v4.3.1
+      uses: actions/upload-artifact@v4.3.3
       if: steps.organize.conclusion == 'success' && env.UPLOAD_BIN_DIR == 'true' && !cancelled()
       with:
         path: ${{env.REPO_FLODER}}/bin
@@ -255,14 +255,14 @@ jobs:
         echo "STRDATE=$(TZ=UTC-8 date +%Y-%m-%d)" >>$GITHUB_ENV
 
     - name: 上传 Packages
-      uses: actions/upload-artifact@v4.3.1
+      uses: actions/upload-artifact@v4.3.3
       if: env.upload_packages == 'true' && env.UPLOAD_PACKAGES == 'true' && !cancelled()
       with:
         path: firmware/*packages.tar.gz
         name: OpenWrt-${{env.TARGET_DEVICE}}-package
 
     - name: 上传 Firmware
-      uses: actions/upload-artifact@v4.3.1
+      uses: actions/upload-artifact@v4.3.3
       if: env.upload_firmware == 'true' && env.UPLOAD_SYSUPGRADE == 'true' && !cancelled()
       with:
         path: firmware/*${{env.FIRMWARE_TYPE}}*
