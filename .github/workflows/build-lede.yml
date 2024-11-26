@@ -1,17 +1,14 @@
-name: build-immortalwrt
+name: build-lede
 
 on:
-  # schedule: [ cron: 0 2 */7 * * ]
-  # watch:
-  #   types: started
   workflow_dispatch:
     inputs:
       branch:
         description: '选择源码仓库分支'
         required: true
-        default: 'openwrt-23.05'
+        default: 'master'
         type: choice
-        options: [master, openwrt-23.05, openwrt-21.02, openwrt-18.06, openwrt-18.06-k5.4]
+        options: [master, openwrt-23.05]
 
       target:
         description: '选择要编译的机型'
@@ -47,7 +44,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id
-    name: immortalwrt-${{ github.event.inputs.branch }}-${{ github.event.inputs.target }}
+    name: lede-${{ github.event.inputs.branch }}-${{ github.event.inputs.target }}
 
     permissions:
       contents: write
@@ -57,6 +54,13 @@ jobs:
       TARGET_DEVICE: ${{ github.event.inputs.target }}
       DEFAULT_IP: ${{ github.event.inputs.ip }}
       PART_SIZE: ${{ github.event.inputs.partsize }}
+    #   TARGET_DEVICE: ${{matrix.target}}
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     target: [x86_64, r1-plus-lts]
+    #     target: [newifi-d2, phicomm_k2p ,asus_rt-n16, armvirt-64-default, x86_64]
+    #     target: [newifi-d2, x86_64, r1-plus-lts, phicomm_k2p, armvirt-64-default, asus_rt-n16]
 
     steps:
     - name: View System Performance
@@ -122,7 +126,7 @@ jobs:
         sudo -E timedatectl set-timezone "$TZ"
 
     - name: Load Compile Script
-      run: chmod +x immortalwrt.sh && ./immortalwrt.sh
+      run: chmod +x lede.sh && ./lede.sh
 
     - name: Compile Toolchain
       id: toolchain
@@ -130,7 +134,7 @@ jobs:
       run: |
         cd $OPENWRT_PATH
         make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
-        $GITHUB_WORKSPACE/immortalwrt.sh
+        $GITHUB_WORKSPACE/lede.sh
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
         echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
