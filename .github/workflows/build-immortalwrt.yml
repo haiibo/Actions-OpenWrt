@@ -41,7 +41,7 @@ env:
   UPLOAD_BIN_DIR: false
   UPLOAD_ARTIFACT: true
   UPLOAD_RELEASE: true
-  PACKAGED_STATUS: false
+  PACKAGED_STATUS: true
   TZ: Asia/Shanghai
 
 jobs:
