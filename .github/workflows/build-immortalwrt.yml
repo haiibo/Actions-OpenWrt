@@ -41,6 +41,7 @@ env:
   UPLOAD_BIN_DIR: false
   UPLOAD_ARTIFACT: true
   UPLOAD_RELEASE: true
+  PACKAGED_STATUS: false
   TZ: Asia/Shanghai
 
 jobs:
@@ -146,96 +147,25 @@ jobs:
         fail-if-no-release: false
 
     - name: Upload Toolchain To Release
-      if: steps.toolchain.conclusion == 'success' && !cancelled()
+      if: env.PACKAGED_STATUS != 'true'
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} toolchain-cache ${{ env.EMOJI }}
         tag_name: toolchain
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: output/*
+        files: output/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}.*
         body: OpenWrt 工具链缓存
+#        with:
+#          files: Release.txt
 
-    - name: Download DL Package
-      run: |
-        cd $OPENWRT_PATH
-        # make package/download -j$(nproc)
-        n=0; while true; do make package/download -j && break || (n=$((n+1)); [ $n -eq 3 ] && break); done
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
-
-    - name: Compile Firmware
-      id: compile
-      timeout-minutes: 1440
-      run: |
-        cd $OPENWRT_PATH
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
-        echo "FILE_DATE=$(date +%Y-%m-%d)" >>$GITHUB_ENV
-
-    - name: Upload Bin Directory
-      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN_DIR == 'true' && !cancelled()
-      uses: actions/upload-artifact@v4.4.0
+    - name: Upload OpenWrt To Release
+      if: env.PACKAGED_STATUS == 'true'
+      uses: ncipollo/release-action@main
       with:
-        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.TARGET_DEVICE }}-bin-${{ env.FILE_DATE }}
-        path: ${{ env.OPENWRT_PATH }}/bin
-
-    - name: Organize Files
-      id: organize
-      if: steps.compile.conclusion == 'success' && !cancelled()
-      run: |
-        df -hT
-        cd $OPENWRT_PATH
-        echo "======================================"
-        du -h --max-depth=1 ./bin
-        du -h --max-depth=1 ./build_dir
-        du -h --max-depth=1 ./staging_dir
-        du -h --max-depth=1 ./ --exclude=bin --exclude=build_dir --exclude=staging_dir --exclude=bin
-        echo "======================================"
-        ls bin/targets/*/*
-        echo "======================================"
-        cat bin/targets/*/*/config.buildinfo
-        [ -d firmware ] || mkdir firmware
-        FILE_NAME=$SOURCE_REPO-${REPO_BRANCH#*-}
-        TARGET_NAME=$DEVICE_TARGET-$DEVICE_SUBTARGET
-        tar -zcf firmware/$FILE_NAME-$TARGET_NAME-packages.tar.gz bin/packages
-        [ $FIRMWARE_TYPE ] && cp -f $(find bin/targets/ -type f -name "*$FIRMWARE_TYPE*") firmware
-        cd firmware && md5sum * >$FILE_NAME-$TARGET_NAME-md5-config.txt
-        sed '/^$/d' $OPENWRT_PATH/.config >>$FILE_NAME-$TARGET_NAME-md5-config.txt
-        # [ $SOURCE_REPO == immortalwrt ] && \
-        # rename 's/immortalwrt/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}/' * || \
-        # rename 's/openwrt/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}/' *
-        echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
-
-    - name: Upload Firmware To Artifact
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true' && !cancelled()
-      uses: haiibo/upload-artifact-as-is@master
-      with:
-        path: ${{ env.FIRMWARE_PATH }}
-
-    - name: Upload Firmware To Release
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
-      uses: softprops/action-gh-release@v2.0.8
-      with:
-        name: ${{ env.EMOJI }} ${{ env.FILE_DATE }} ${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }} ${{ env.EMOJI }}
-        tag_name: ${{ env.FILE_DATE }}-${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }}
+        name: ${{ env.EMOJI }} toolchain-cache ${{ env.EMOJI }}
+        allowUpdates: true
+        replacesArtifacts: true
+        tag: toolchain
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: ${{ env.FIRMWARE_PATH }}/*
-        body: |
-          **This is OpenWrt Firmware for ${{ env.TARGET_DEVICE }}**
-          ### 📒 固件信息
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
-          - ⚽ 固件源码: ${{ env.REPO_URL }}
-          - 💝 源码分支: ${{ env.REPO_BRANCH }}
-          - 🚀 内核版本: ${{ env.KERNEL_VERSION }}
-          - 🌐 默认地址: ${{ env.DEFAULT_IP }}
-          - 🔑 默认密码: password
-
-    - name: Delete Old Releases
-      if: (!cancelled())
-      uses: dev-drprasad/delete-older-releases@v0.3.4
-      with:
-        keep_latest: 15
-        delete_tags: true
-        delete_tag_pattern: .*${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: output/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}.*
+        body: OpenWrt 工具链缓存
