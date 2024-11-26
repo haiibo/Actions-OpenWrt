@@ -125,17 +125,6 @@ jobs:
     - name: Load Compile Script
       run: chmod +x immortalwrt.sh && ./immortalwrt.sh
 
-    - name: Compile Toolchain
-      id: toolchain
-      if: env.REBUILD_TOOLCHAIN == 'true' && !cancelled()
-      run: |
-        cd $OPENWRT_PATH
-        make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
-        $GITHUB_WORKSPACE/immortalwrt.sh
-        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
-        echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
-
     - name: Delete Old Toolchain
       if: steps.toolchain.conclusion == 'success' && !cancelled()
       uses: mknejp/delete-release-assets@v1
