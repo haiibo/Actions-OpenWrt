@@ -1,4 +1,4 @@
-name: build-immortalwrt
+name: build-openwrt
 
 on:
   # schedule: [ cron: 0 2 */7 * * ]
@@ -6,6 +6,13 @@ on:
   #   types: started
   workflow_dispatch:
     inputs:
+      source:
+        description: "选择编译源码仓库"
+        required: true
+        default: "immortalwrt"
+        type: choice
+        options: [lede, immortalwrt]
+
       branch:
         description: '选择源码仓库分支'
         required: true
@@ -47,12 +54,13 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     if: github.event.repository.owner.id == github.event.sender.id || ! github.event.sender.id
-    name: immortalwrt-${{ github.event.inputs.branch }}-${{ github.event.inputs.target }}
+    name: ${{ github.event.inputs.source }}-${{ github.event.inputs.branch }}-${{ github.event.inputs.target }}
 
     permissions:
       contents: write
 
     env:
+      SOURCE_REPO: ${{ github.event.inputs.source }}
       REPO_BRANCH: ${{ github.event.inputs.branch }}
       TARGET_DEVICE: ${{ github.event.inputs.target }}
       DEFAULT_IP: ${{ github.event.inputs.ip }}
@@ -122,7 +130,7 @@ jobs:
         sudo -E timedatectl set-timezone "$TZ"
 
     - name: Load Compile Script
-      run: chmod +x immortalwrt.sh && ./immortalwrt.sh
+      run: chmod +x $SOURCE_REPO.sh && ./$SOURCE_REPO.sh
 
     - name: Compile Toolchain
       id: toolchain
@@ -130,7 +138,7 @@ jobs:
       run: |
         cd $OPENWRT_PATH
         make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
-        $GITHUB_WORKSPACE/immortalwrt.sh
+        $GITHUB_WORKSPACE/$SOURCE_REPO.sh
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
         echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
@@ -194,17 +202,7 @@ jobs:
         ls bin/targets/*/*
         echo "======================================"
         cat bin/targets/*/*/config.buildinfo
-        [ -d firmware ] || mkdir firmware
-        FILE_NAME=$SOURCE_REPO-${REPO_BRANCH#*-}
-        TARGET_NAME=$DEVICE_TARGET-$DEVICE_SUBTARGET
-        tar -zcf firmware/$FILE_NAME-$TARGET_NAME-packages.tar.gz bin/packages
-        [ $FIRMWARE_TYPE ] && cp -f $(find bin/targets/ -type f -name "*$FIRMWARE_TYPE*") firmware
-        cd firmware && md5sum * >$FILE_NAME-$TARGET_NAME-md5-config.txt
-        sed '/^$/d' $OPENWRT_PATH/.config >>$FILE_NAME-$TARGET_NAME-md5-config.txt
-        # [ $SOURCE_REPO == immortalwrt ] && \
-        # rename 's/immortalwrt/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}/' * || \
-        # rename 's/openwrt/${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}/' *
-        echo "FIRMWARE_PATH=$PWD" >>$GITHUB_ENV
+        bash organize.sh
 
     - name: Upload Firmware To Artifact
       if: steps.organize.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true' && !cancelled()
