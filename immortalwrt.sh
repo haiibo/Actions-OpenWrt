@@ -271,7 +271,12 @@ TOOLS_HASH=$(git log --pretty=tformat:"%h" -n1 tools toolchain)
 CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-$DEVICE_SUBTARGET-cache-$TOOLS_HASH"
 echo "CACHE_NAME=$CACHE_NAME" >>$GITHUB_ENV
 status
-
+[[ -d output ]] || mkdir output
+wget -q https://github.com/hong0980/Actions-OpenWrt/releases/download/immortalwrt-Cache/immortalwrt-21.02-0bd0306b05-x86_64-cache.tzst -O output/immortalwrt-21.02-x86_64-cache-5637dd20a4.tzst
+wget -q https://github.com/hong0980/Actions-OpenWrt/releases/download/immortalwrt-Cache/immortalwrt-23.05-5637dd20a4-x86_64-cache.tzst -O output/immortalwrt-23.05-x86_64-cache-5637dd20a4.tzst
+wget -q https://github.com/hong0980/Actions-OpenWrt/releases/download/immortalwrt-Cache/immortalwrt-master-352452d33c-x86_64-cache.tzst -O output/immortalwrt-master-x86_64-cache-5637dd20a4.tzst
+echo "REBUILD_TOOLCHAIN=true" >>$GITHUB_ENV
+exit 0
 #CACHE_URL=$(curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
 curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | grep -oP 'download_url": "\K[^"]*cache[^"]*' >cache_url
 
