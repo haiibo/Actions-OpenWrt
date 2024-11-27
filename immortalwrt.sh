@@ -290,7 +290,7 @@ else
     echo "REBUILD_TOOLCHAIN=true" >>$GITHUB_ENV
 fi
 
-STEP_NAME='更新&安装软件'; BEGIN_TIME=$(date '+%H:%M:%S')
+STEP_NAME='更新&安装插件'; BEGIN_TIME=$(date '+%H:%M:%S')
 ./scripts/feeds update -a 1>/dev/null 2>&1
 ./scripts/feeds install -a 1>/dev/null 2>&1
 status
@@ -551,8 +551,8 @@ esac
 
     xb=$(_find "package/ feeds/" "luci-app-bypass")
     [[ -d $xb ]] && sed -i 's/default y/default n/g' $xb/Makefile
-    qBittorrent_version=$(curl -sL https://api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*-\K\d+\.\d+\.\d+')
-    libtorrent_version=$(curl -sL https://api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*v\K\d+\.\d+\.\d+')
+    qBittorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*-\K\d+\.\d+\.\d+')
+    libtorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*v\K\d+\.\d+\.\d+')
     xc=$(_find "package/ feeds/" "qBittorrent-static")
     [[ -d $xc ]] && {
         sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=${qBittorrent_version:-4.6.5}_v${libtorrent_version:-2.0.10}/" $xc/Makefile
