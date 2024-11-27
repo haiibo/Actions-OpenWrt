@@ -146,7 +146,7 @@ jobs:
       uses: mknejp/delete-release-assets@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: toolchain
+        tag: toolchain-cache
         assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}.*'
         fail-if-no-assets: false
         fail-if-no-release: false
@@ -156,7 +156,7 @@ jobs:
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} toolchain-cache ${{ env.EMOJI }}
-        tag_name: toolchain
+        tag_name: toolchain-cache
         token: ${{ secrets.GITHUB_TOKEN }}
         files: output/*
         body: OpenWrt 工具链缓存
@@ -216,7 +216,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: ${{ env.FIRMWARE_PATH }}/*
         body: |
-          **This is OpenWrt Firmware for ${{ env.TARGET_DEVICE }}**
+          **This is ${{ env.SOURCE_REPO }} firmware for ${{ env.TARGET_DEVICE }}**
           ### 📒 固件信息
           - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
           - ⚽ 固件源码: ${{ env.REPO_URL }}
@@ -224,20 +224,3 @@ jobs:
           - 🚀 内核版本: ${{ env.KERNEL_VERSION }}
           - 🌐 默认地址: ${{ env.DEFAULT_IP }}
           - 🔑 默认密码: password
-
-    - name: Delete Old Workflows
-      uses: Mattraks/delete-workflow-runs@main
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        retain_days: 15
-        keep_minimum_runs: 10
-
-    - name: Delete Old Releases
-      if: (!cancelled())
-      uses: dev-drprasad/delete-older-releases@v0.3.4
-      with:
-        keep_latest: 15
-        delete_tags: true
-        delete_tag_pattern: .*${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
