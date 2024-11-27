@@ -576,7 +576,7 @@ done
 cat >organize.sh<<-EOF
 	#!/bin/bash
 	[ -d firmware ] || mkdir firmware
-	FILE_NAME=\$SOURCE_REPO-\${REPO_BRANCH#*-}
+	FILE_NAME=\$SOURCE_REPO-\${REPO_BRANCH#*-}-\$KERNEL_VERSION
 	TARGET_NAME=\$DEVICE_TARGET-\$DEVICE_SUBTARGET
 	tar -zcf firmware/\$FILE_NAME-\$TARGET_NAME-packages.tar.gz bin/packages
 	[ \$FIRMWARE_TYPE ] && cp -f \$(find bin/targets/ -type f -name "*\$FIRMWARE_TYPE*") firmware
