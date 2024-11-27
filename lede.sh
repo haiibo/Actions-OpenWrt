@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
-    echo "开始打包toolchain"
+    echo -e "\e[1;33m开始打包toolchain\e[0m"
     cd $OPENWRT_PATH
+    sed -i 's/ $(tool.*\/stamp-compile)//' Makefile
     [[ -d ".ccache" ]] && (ccache=".ccache"; ls -alh .ccache)
     du -h --max-depth=1 ./staging_dir
     du -h --max-depth=1 ./ --exclude=staging_dir
     tar -I zstdmt -cf ../output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
     ls -lh ../output
-    [[ -e ../output/$CACHE_NAME.tzst ]] || exit 1
-    sed -i 's/ $(tool.*\/stamp-compile)//' Makefile
+    [[ -e ../output/$CACHE_NAME.tzst ]] || \
+    echo -e "\e[1;31m打包toolchain失败\e[0m"
     exit 0
 fi
 
@@ -45,6 +46,12 @@ _find() {
 _packages() {
     for z in $@; do
         [[ $z =~ ^# ]] || echo "CONFIG_PACKAGE_$z=y" >>.config
+    done
+}
+
+_delpackage() {
+    for z in $@; do
+        [[ $z =~ ^# ]] || sed -i -E "s/(CONFIG_PACKAGE_.*$z)=y/# \1 is not set/" .config
     done
 }
 
@@ -156,7 +163,7 @@ clone_all() {
     rm -rf $temp_dir
 }
 
-config(){
+config() {
 	case "$TARGET_DEVICE" in
 		"x86_64")
 			cat >.config<<-EOF
@@ -370,117 +377,116 @@ axel patch diffutils collectd-mod-ping collectd-mod-thermal wpad-wolfssl
 config_generate="package/base-files/files/bin/config_generate"
 wget -qO package/base-files/files/etc/banner git.io/JoNK8
 
-case $TARGET_DEVICE in
-"newifi-d2")
-    FIRMWARE_TYPE="sysupgrade"
-    _packages "luci-app-easymesh"
-    _delpackage "ikoolproxy openclash transmission softwarecenter aria2 vssr adguardhome"
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
-    ;;
-"phicomm_k2p")
-    FIRMWARE_TYPE="sysupgrade"
-    _packages "luci-app-easymesh"
-    _delpackage "samba4 luci-app-usb-printer luci-app-cifs-mount diskman cupsd autosamba automount"
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
-    ;;
-"r1-plus-lts"|"r4s"|"r2c"|"r2s")
-    FIRMWARE_TYPE="sysupgrade"
-    _packages "
-    luci-app-cpufreq
-    luci-app-adbyby-plus
-    luci-app-dockerman
-    luci-app-qbittorrent
-    luci-app-turboacc
-    luci-app-passwall2
-    #luci-app-easymesh
-    luci-app-store
-    #luci-app-unblockneteasemusic
-    #luci-app-amule
-    #luci-app-smartdns
-    #luci-app-aliyundrive-fuse
-    #luci-app-aliyundrive-webdav
-    luci-app-deluge
-    luci-app-netdata
-    htop lscpu lsscsi lsusb #nano pciutils screen zstd pv
-    #AmuleWebUI-Reloaded #subversion-client unixodbc #git-http
-    "
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
-    wget -qO package/base-files/files/bin/bpm git.io/bpm && chmod +x package/base-files/files/bin/bpm
-    wget -qO package/base-files/files/bin/ansi git.io/ansi && chmod +x package/base-files/files/bin/ansi
-    sed -i "/interfaces_lan_wan/s/'eth1' 'eth0'/'eth0' 'eth1'/" target/linux/rockchip/*/*/*/*/02_network
-    ;;
-"asus_rt-n16")
-    FIRMWARE_TYPE="n16"
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.130"/' $config_generate
-    ;;
-"x86_64")
-    FIRMWARE_TYPE="squashfs-combined"
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.150"/' $config_generate
-    _packages "
-    luci-app-adbyby-plus
-    #luci-app-amule
-    luci-app-deluge
-    luci-app-passwall2
-    luci-app-dockerman
-    luci-app-netdata
-    #luci-app-kodexplorer
-    luci-app-poweroff
-    luci-app-qbittorrent
-    luci-app-smartdns
-    #luci-app-unblockmusic
-    #luci-app-aliyundrive-fuse
-    #luci-app-aliyundrive-webdav
-    #AmuleWebUI-Reloaded ariang bash htop lscpu lsscsi lsusb nano pciutils screen webui-aria2 zstd tar pv
-    #subversion-client #unixodbc #git-http
-    "
-    sed -i '/easymesh/d' .config
-    rm -rf package/lean/rblibtorrent
-    # sed -i '/KERNEL_PATCHVER/s/=.*/=6.1/' target/linux/x86/Makefile
-    wget -qO package/lean/autocore/files/x86/index.htm \
-    https://raw.githubusercontent.com/immortalwrt/luci/openwrt-18.06-k5.4/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-    wget -qO package/base-files/files/bin/bpm git.io/bpm && chmod +x package/base-files/files/bin/bpm
-    wget -qO package/base-files/files/bin/ansi git.io/ansi && chmod +x package/base-files/files/bin/ansi
-    ;;
-"armvirt-64-default")
-    FIRMWARE_TYPE="$TARGET_DEVICE"
-    sed -i '/easymesh/d' .config
-    [[ -n $DEFAULT_IP ]] && \
-    sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
-    sed -i '/n) ipad/s/".*"/"192.168.2.110"/' $config_generate
-    _packages "attr bash blkid brcmfmac-firmware-43430-sdio brcmfmac-firmware-43455-sdio
-    btrfs-progs cfdisk chattr curl dosfstools e2fsprogs f2fs-tools f2fsck fdisk getopt
-    hostpad-common htop install-program iperf3 kmod-brcmfmac kmod-brcmutil kmod-cfg80211
-    kmod-fs-exfat kmod-fs-ext4 kmod-fs-vfat kmod-mac80211 kmod-rt2800-usb kmod-usb-net
-    kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-storage
-    kmod-usb-storage-extras kmod-usb-storage-uas kmod-usb2 kmod-usb3 lm-sensors losetup
-    lsattr lsblk lscpu lsscsi luci-app-adguardhome luci-app-cpufreq luci-app-dockerman
-    luci-app-qbittorrent mkf2fs ntfs-3g parted pv python3 resize2fs tune2fs unzip
-    uuidgen wpa-cli wpad wpad-basic xfs-fsck xfs-mkf"
-
-    # wget -qO feeds/luci/applications/luci-app-qbittorrent/Makefile https://raw.githubusercontent.com/immortalwrt/luci/openwrt-18.06/applications/luci-app-qbittorrent/Makefile
-    # sed -i 's/-Enhanced-Edition//' feeds/luci/applications/luci-app-qbittorrent/Makefile
-    sed -i 's/arm/arm||TARGET_armvirt_64/g' $(_find "package/ feeds/" "luci-app-cpufreq")/Makefile
-    sed -i "s/default 160/default $PART_SIZE/" config/Config-images.in
-    sed -i 's/services/system/; s/00//' $(_find "package/ feeds/" "luci-app-cpufreq")/luasrc/controller/cpufreq.lua
-    [ -d ../opt/openwrt_packit ] && {
+case "$TARGET_DEVICE" in
+    "x86_64")
+        FIRMWARE_TYPE="squashfs-combined"
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        _packages "
+        luci-app-adbyby-plus
+        #luci-app-amule
+        luci-app-deluge
+        luci-app-passwall2
+        luci-app-dockerman
+        luci-app-netdata
+        #luci-app-kodexplorer
+        luci-app-poweroff
+        luci-app-qbittorrent
+        luci-app-smartdns
+        #luci-app-unblockmusic
+        #luci-app-aliyundrive-fuse
+        #luci-app-aliyundrive-webdav
+        #AmuleWebUI-Reloaded ariang bash htop lscpu lsscsi lsusb nano pciutils screen webui-aria2 zstd tar pv
+        #subversion-client #unixodbc #git-http
+        "
+        sed -i '/easymesh/d' .config
+        rm -rf package/lean/rblibtorrent
+        # sed -i '/KERNEL_PATCHVER/s/=.*/=6.1/' target/linux/x86/Makefile
+        wget -qO package/lean/autocore/files/x86/index.htm \
+        https://raw.githubusercontent.com/immortalwrt/luci/openwrt-18.06-k5.4/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+        wget -qO package/base-files/files/bin/bpm git.io/bpm && chmod +x package/base-files/files/bin/bpm
+        wget -qO package/base-files/files/bin/ansi git.io/ansi && chmod +x package/base-files/files/bin/ansi
+        ;;
+    "r1-plus-lts"|"r4s"|"r2c"|"r2s")
+        FIRMWARE_TYPE="sysupgrade"
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        _packages "
+        luci-app-cpufreq
+        luci-app-adbyby-plus
+        luci-app-dockerman
+        luci-app-qbittorrent
+        luci-app-turboacc
+        luci-app-passwall2
+        #luci-app-easymesh
+        luci-app-store
+        #luci-app-unblockneteasemusic
+        #luci-app-amule
+        #luci-app-smartdns
+        #luci-app-aliyundrive-fuse
+        #luci-app-aliyundrive-webdav
+        luci-app-deluge
+        luci-app-netdata
+        htop lscpu lsscsi lsusb #nano pciutils screen zstd pv
+        #AmuleWebUI-Reloaded #subversion-client unixodbc #git-http
+        "
+        wget -qO package/base-files/files/bin/bpm git.io/bpm && chmod +x package/base-files/files/bin/bpm
+        wget -qO package/base-files/files/bin/ansi git.io/ansi && chmod +x package/base-files/files/bin/ansi
+        sed -i "/interfaces_lan_wan/s/'eth1' 'eth0'/'eth0' 'eth1'/" target/linux/rockchip/*/*/*/*/02_network
+        ;;
+    "newifi-d2")
+        FIRMWARE_TYPE="sysupgrade"
+        _packages "luci-app-easymesh"
+        _delpackage "ikoolproxy openclash transmission softwarecenter aria2 vssr adguardhome"
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        ;;
+    "phicomm_k2p")
+        FIRMWARE_TYPE="sysupgrade"
+        _packages "luci-app-easymesh"
+        _delpackage "samba4 luci-app-usb-printer luci-app-cifs-mount diskman cupsd autosamba automount"
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        ;;
+    "asus_rt-n16")
+        FIRMWARE_TYPE="n16"
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        ;;
+    "armvirt-64-default")
+        FIRMWARE_TYPE="$TARGET_DEVICE"
+        sed -i '/easymesh/d' .config
+        [[ -n $DEFAULT_IP ]] && \
+        sed -i '/n) ipad/s/".*"/"'"$DEFAULT_IP"'"/' $config_generate || \
+        sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
+        _packages "attr bash blkid brcmfmac-firmware-43430-sdio brcmfmac-firmware-43455-sdio
+        btrfs-progs cfdisk chattr curl dosfstools e2fsprogs f2fs-tools f2fsck fdisk getopt
+        hostpad-common htop install-program iperf3 kmod-brcmfmac kmod-brcmutil kmod-cfg80211
+        kmod-fs-exfat kmod-fs-ext4 kmod-fs-vfat kmod-mac80211 kmod-rt2800-usb kmod-usb-net
+        kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 kmod-usb-storage
+        kmod-usb-storage-extras kmod-usb-storage-uas kmod-usb2 kmod-usb3 lm-sensors losetup
+        lsattr lsblk lscpu lsscsi luci-app-adguardhome luci-app-cpufreq luci-app-dockerman
+        luci-app-qbittorrent mkf2fs ntfs-3g parted pv python3 resize2fs tune2fs unzip
+        uuidgen wpa-cli wpad wpad-basic xfs-fsck xfs-mkf"
+        # wget -qO feeds/luci/applications/luci-app-qbittorrent/Makefile https://raw.githubusercontent.com/immortalwrt/luci/openwrt-18.06/applications/luci-app-qbittorrent/Makefile
+        # sed -i 's/-Enhanced-Edition//' feeds/luci/applications/luci-app-qbittorrent/Makefile
+        sed -i 's/arm/arm||TARGET_armvirt_64/g' $(_find "package/ feeds/" "luci-app-cpufreq")/Makefile
+        sed -i "s/default 160/default $PART_SIZE/" config/Config-images.in
+        sed -i 's/services/system/; s/00//' $(_find "package/ feeds/" "luci-app-cpufreq")/luasrc/controller/cpufreq.lua
+        [ -d ../opt/openwrt_packit ] && {
         sed -i '{
         s|mv |mv -v |
         s|openwrt-armvirt-64-default-rootfs.tar.gz|$(ls *default-rootfs.tar.gz)|
         s|TGT_IMG=.*|TGT_IMG="${WORK_DIR}/unifreq-openwrt-${SOC}_${BOARD}_k${KERNEL_VERSION}${SUBVER}-$(date "+%Y-%m%d-%H%M").img"|
         }' ../opt/openwrt_packit/mk*.sh
         sed -i '/ KERNEL_VERSION.*flippy/ {s/KERNEL_VERSION.*/KERNEL_VERSION="5.15.4-flippy-67+"/}' ../opt/openwrt_packit/make.env
-    }
-    ;;
+        }
+        ;;
 esac
 
 if [[ $REPO_URL =~ "coolsnowwolf" ]]; then
@@ -607,14 +613,14 @@ git clone -q https://github.com/zsh-users/zsh-syntax-highlighting files/root/.oh
 git clone -q https://github.com/zsh-users/zsh-completions files/root/.oh-my-zsh/custom/plugins/zsh-completions
 cat >files/root/.zshrc<<-EOF
 	# Path to your oh-my-zsh installation.
-	ZSH=$HOME/.oh-my-zsh
+	ZSH=\$HOME/.oh-my-zsh
 	# Set name of the theme to load.
 	ZSH_THEME="ys"
 	# Uncomment the following line to disable bi-weekly auto-update checks.
 	DISABLE_AUTO_UPDATE="true"
 	# Which plugins would you like to load?
 	plugins=(git command-not-found extract z docker zsh-syntax-highlighting zsh-autosuggestions zsh-completions)
-	source $ZSH/oh-my-zsh.sh
+	source \$ZSH/oh-my-zsh.sh
 	autoload -U compinit && compinit
 EOF
 status
@@ -633,7 +639,7 @@ make defconfig 1>/dev/null 2>&1
 status
 
 echo -e "$(color cy 当前编译机型) $(color cb $SOURCE_REPO-${REPO_BRANCH#*-}-$TARGET_DEVICE-$KERNEL_VERSION)"
-# sed -i "s/\$(VERSION_DIST_SANITIZED)/$SOURCE_REPO-${REPO_BRANCH#*-}-\$(shell date +%y.%m.%d)/" include/image.mk
+sed -i "s/\$(VERSION_DIST_SANITIZED)/$SOURCE_REPO-${REPO_BRANCH#*-}-$KERNEL_VERSION/" include/image.mk
 # sed -i "/IMG_PREFIX:/ {s/=/=$SOURCE_NAME-${REPO_BRANCH#*-}-$KERNEL_VERSION-\$(shell date +%y.%m.%d)-/}" include/image.mk
 
 echo "UPLOAD_BIN_DIR=false" >>$GITHUB_ENV

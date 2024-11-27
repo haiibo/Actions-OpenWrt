@@ -40,9 +40,8 @@ on:
       free_disk:
         description: '释放磁盘空间'
         required: false
-        default: 'false'
-        type: choice
-        options: [no, losetup, plus]
+        default: false
+        type: boolean
 
 env:
   UPLOAD_BIN_DIR: false
@@ -67,7 +66,7 @@ jobs:
       PART_SIZE: ${{ github.event.inputs.partsize }}
 
     steps:
-    - name: View System Performance
+    - name: Check Server Performance
       run: |
         echo "警告⚠"
         echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
@@ -83,10 +82,10 @@ jobs:
         echo "硬盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
     - name: Free Disk Space
-      if: github.event.inputs.free_disk == 'plus'
+      if: github.event.inputs.free_disk == 'true'
       uses: jlumbroso/free-disk-space@main
       with:
-        tool-cache: false
+        tool-cache: true
         android: true
         dotnet: true
         haskell: true
@@ -94,8 +93,21 @@ jobs:
         docker-images: true
         swap-storage: true
 
-    - name: Create Simulated Disk
-      if: github.event.inputs.free_disk == 'losetup' || github.event.inputs.free_disk == 'plus'
+    - name: Initialization Environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        (docker rmi $(docker images -q)
+        sudo rm -rf /usr/share/dotnet /etc/apt/sources.list.d /usr/local/lib/android $AGENT_TOOLSDIRECTORY
+        sudo swapoff -a && sudo rm -f /swapfile /mnt/swapfile
+        sudo -E apt-get -y update
+        sudo -E apt-get -y install clang rename $(curl -fsSL is.gd/depends_ubuntu_2204)
+        sudo -E systemctl daemon-reload
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get -y clean) &
+        sudo -E timedatectl set-timezone "$TZ"
+
+    - name: Create Combine Disks
       run: |
         MNT_SIZE=$((($(df --block-size=1024 --output=avail /mnt | tail -1) - 1024*1024*1) * 1024))
         sudo fallocate -l $MNT_SIZE /mnt/mnt.img
@@ -114,20 +126,6 @@ jobs:
 
     - name: Checkout Repo
       uses: actions/checkout@v4.2.0
-
-    - name: Initialization Environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        (docker rmi $(docker images -q)
-        sudo rm -rf /usr/share/dotnet /etc/apt/sources.list.d /usr/local/lib/android $AGENT_TOOLSDIRECTORY
-        sudo swapoff -a && sudo rm -f /swapfile /mnt/swapfile
-        sudo -E apt-get -y update
-        sudo -E apt-get -y install clang rename $(curl -fsSL is.gd/depends_ubuntu_2204)
-        sudo -E systemctl daemon-reload
-        sudo -E apt-get -y autoremove --purge
-        sudo -E apt-get -y clean) &
-        sudo -E timedatectl set-timezone "$TZ"
 
     - name: Load Compile Script
       run: chmod +x $SOURCE_REPO.sh && ./$SOURCE_REPO.sh
@@ -166,8 +164,7 @@ jobs:
     - name: Download DL Package
       run: |
         cd $OPENWRT_PATH
-        # make package/download -j$(nproc)
-        n=0; while true; do make package/download -j && break || (n=$((n+1)); [ $n -eq 3 ] && break); done
+        make package/download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
@@ -227,6 +224,13 @@ jobs:
           - 🚀 内核版本: ${{ env.KERNEL_VERSION }}
           - 🌐 默认地址: ${{ env.DEFAULT_IP }}
           - 🔑 默认密码: password
+
+    - name: Delete Old Workflows
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        retain_days: 15
+        keep_minimum_runs: 10
 
     - name: Delete Old Releases
       if: (!cancelled())
