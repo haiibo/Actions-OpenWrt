@@ -670,6 +670,7 @@ status
 }
 
 STEP_NAME='下载zsh终端工具'; BEGIN_TIME=$(date '+%H:%M:%S')
+[ $ZSH_TOOL = 'true' ] && {
 [[ -d files/root ]] || mkdir -p files/root
 git clone -q https://github.com/ohmyzsh/ohmyzsh files/root/.oh-my-zsh
 git clone -q https://github.com/zsh-users/zsh-autosuggestions files/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions
@@ -687,6 +688,7 @@ cat >files/root/.zshrc<<-EOF
 	source \$ZSH/oh-my-zsh.sh
 	autoload -U compinit && compinit
 EOF
+}
 status
 
 [[ $KERNEL_TARGET ]] && {
