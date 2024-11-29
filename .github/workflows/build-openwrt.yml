@@ -1,7 +1,7 @@
 name: build-openwrt
 
 on:
-  # schedule: [ cron: 0 2 */7 * * ]
+  # schedule: [cron: 0 2 */7 * *]
   # watch:
   #   types: started
   workflow_dispatch:
@@ -28,26 +28,43 @@ on:
         options: [x86_64, r1-plus-lts, r2c, r2s, r4s, newifi-d2, asus_rt-n16, phicomm_k2p, armvirt-64-default]
 
       ip:
-        description: '设置web登录IP'
+        description: '设置默认登录IP'
         required: false
         default: '192.168.2.1'
 
       partsize:
-        description: '设置rootfs大小'
+        description: '设置固件rootfs大小'
         required: false
         default: '800'
 
       free_disk:
-        description: '释放磁盘空间'
+        description: '清理释放磁盘空间'
         required: false
         default: false
         type: boolean
 
-env:
-  UPLOAD_BIN_DIR: false
-  UPLOAD_ARTIFACT: true
-  UPLOAD_RELEASE: true
-  TZ: Asia/Shanghai
+      zsh_tool:
+        description: "预设zsh终端工具"
+        required: false
+        default: true
+        type: boolean
+
+      openclash:
+        description: "预设openclash内核"
+        required: false
+        default: "amd64"
+
+      artifact:
+        description: "上传固件到Artifact"
+        required: false
+        default: true
+        type: boolean
+
+      release:
+        description: "上传固件到Releases"
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   build:
@@ -64,6 +81,11 @@ jobs:
       TARGET_DEVICE: ${{ github.event.inputs.target }}
       DEFAULT_IP: ${{ github.event.inputs.ip }}
       PART_SIZE: ${{ github.event.inputs.partsize }}
+      ZSH_TOOL: ${{ github.event.inputs.zsh_tool }}
+      CLASH_KERNEL: ${{ github.event.inputs.openclash }}
+      TOOLCHAIN_TAG: toolchain
+      UPLOAD_BIN_DIR: false
+      TZ: Asia/Shanghai
 
     steps:
     - name: Check Server Performance
@@ -147,7 +169,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: toolchain-cache
-        assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}.*'
+        assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}.*'
         fail-if-no-assets: false
         fail-if-no-release: false
 
@@ -202,13 +224,14 @@ jobs:
         bash organize.sh
 
     - name: Upload Firmware To Artifact
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_ARTIFACT == 'true' && !cancelled()
-      uses: haiibo/upload-artifact-as-is@master
+      if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true' && !cancelled()
+      uses: actions/upload-artifact@main
       with:
+        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-firmware-${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE_PATH }}
 
     - name: Upload Firmware To Release
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: steps.organize.conclusion == 'success' && github.event.inputs.release == 'true' && !cancelled()
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} ${{ env.FILE_DATE }} ${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }} ${{ env.EMOJI }}
@@ -218,7 +241,7 @@ jobs:
         body: |
           **This is ${{ env.SOURCE_REPO }} firmware for ${{ env.TARGET_DEVICE }}**
           ### 📒 固件信息
-          - 💻 平台架构: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+          - 💻 平台架构: ${{ env.DEVICE_TARGET }}
           - ⚽ 固件源码: ${{ env.REPO_URL }}
           - 💝 源码分支: ${{ env.REPO_BRANCH }}
           - 🚀 内核版本: ${{ env.KERNEL_VERSION }}
