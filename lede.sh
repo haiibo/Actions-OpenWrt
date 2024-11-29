@@ -248,16 +248,20 @@ echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 STEP_NAME='生成全局变量'; BEGIN_TIME=$(date '+%H:%M:%S')
 config
 make defconfig 1>/dev/null 2>&1
+
 SOURCE_REPO=$(basename $REPO_URL)
 echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
 echo "LITE_BRANCH=${REPO_BRANCH#*-}" >> $GITHUB_ENV
-DEVICE_TARGET=$(awk -F '"' '/CONFIG_TARGET_BOARD/{print $2}' .config)
-echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
-DEVICE_SUBTARGET=$(awk -F '"' '/CONFIG_TARGET_SUBTARGET/{print $2}' .config)
-echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
-KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[^ ]+' target/linux/$DEVICE_TARGET/Makefile)
+
+TARGET_NAME=$(awk -F '"' '/CONFIG_TARGET_BOARD/{print $2}' .config)
+SUBTARGET_NAME=$(awk -F '"' '/CONFIG_TARGET_SUBTARGET/{print $2}' .config)
+DEVICE_TARGET=$TARGET_NAME-$SUBTARGET_NAME
+echo "DEVICE_TARGET=$DEVICE_TARGET" >>$GITHUB_ENV
+
+KERNEL=$(grep -oP 'KERNEL_PATCHVER:=\K[^ ]+' target/linux/$TARGET_NAME/Makefile)
 KERNEL_VERSION=$(awk -F '-' '/KERNEL/{print $2}' include/kernel-$KERNEL | awk '{print $1}')
 echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
+
 TOOLS_HASH=$(git log --pretty=tformat:"%h" -n1 tools toolchain)
 CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-$DEVICE_SUBTARGET-cache-$TOOLS_HASH"
 echo "CACHE_NAME=$CACHE_NAME" >>$GITHUB_ENV
