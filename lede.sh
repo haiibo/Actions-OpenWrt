@@ -238,10 +238,13 @@ fi
 REPO_URL="https://github.com/coolsnowwolf/lede"
 echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
 STEP_NAME='拉取编译源码'; BEGIN_TIME=$(date '+%H:%M:%S')
+#cd /workdir
 git clone -q $REPO_URL openwrt
 status
+#ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 [[ -d openwrt ]] && cd openwrt || exit
 echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+
 [[ $REPO_BRANCH == master ]] && sed -i '/luci/s/^#//; /openwrt-23.05/s/^/#/' feeds.conf.default
 
 STEP_NAME='生成全局变量'; BEGIN_TIME=$(date '+%H:%M:%S')
