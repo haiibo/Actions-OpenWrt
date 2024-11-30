@@ -169,7 +169,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: toolchain-cache
-        assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}.*'
+        assets: '${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}*'
         fail-if-no-assets: false
         fail-if-no-release: false
 
@@ -227,7 +227,7 @@ jobs:
       if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true' && !cancelled()
       uses: actions/upload-artifact@main
       with:
-        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.DEVICE_TARGET }}-firmware-${{ env.FILE_DATE }}
+        name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.TARGET_DEVICE }}-firmware-${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE_PATH }}
 
     - name: Upload Firmware To Release
