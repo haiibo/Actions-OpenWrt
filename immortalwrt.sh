@@ -644,10 +644,9 @@ cat >organize.sh<<-EOF
 	#!/bin/bash
 	[ -d firmware ] || mkdir firmware
 	FILE_NAME=\$SOURCE_REPO-\${REPO_BRANCH#*-}-\$KERNEL_VERSION
-	TARGET_NAME=\$DEVICE_TARGET-\$DEVICE_SUBTARGET
-	tar -zcf firmware/\$FILE_NAME-\$TARGET_NAME-packages.tar.gz bin/packages
+	tar -zcf firmware/\$FILE_NAME-\$DEVICE_TARGET-packages.tar.gz bin/packages
 	[ \$FIRMWARE_TYPE ] && cp -f \$(find bin/targets/ -type f -name "*\$FIRMWARE_TYPE*") firmware
-	cd firmware && md5sum * >\$FILE_NAME-\$TARGET_NAME-md5-config.txt
+	cd firmware && md5sum * >\$FILE_NAME-\$DEVICE_TARGET-md5-config.txt
 	sed '/^$/d' \$OPENWRT_PATH/.config >>\$FILE_NAME-\$TARGET_NAME-md5-config.txt
 	# [ \$SOURCE_REPO == immortalwrt ] && \
 	# rename 's/immortalwrt/\${{ env.SOURCE_REPO }}-\${{ env.LITE_BRANCH }}/' * || \
@@ -673,12 +672,12 @@ status
 
 STEP_NAME='下载zsh终端工具'; BEGIN_TIME=$(date '+%H:%M:%S')
 [ $ZSH_TOOL = 'true' ] && {
-[[ -d files/root ]] || mkdir -p files/root
-git clone -q https://github.com/ohmyzsh/ohmyzsh files/root/.oh-my-zsh
-git clone -q https://github.com/zsh-users/zsh-autosuggestions files/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-git clone -q https://github.com/zsh-users/zsh-syntax-highlighting files/root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone -q https://github.com/zsh-users/zsh-completions files/root/.oh-my-zsh/custom/plugins/zsh-completions
-cat >files/root/.zshrc<<-EOF
+    [[ -d files/root ]] || mkdir -p files/root
+    git clone -q https://github.com/ohmyzsh/ohmyzsh files/root/.oh-my-zsh
+    git clone -q https://github.com/zsh-users/zsh-autosuggestions files/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    git clone -q https://github.com/zsh-users/zsh-syntax-highlighting files/root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+    git clone -q https://github.com/zsh-users/zsh-completions files/root/.oh-my-zsh/custom/plugins/zsh-completions
+	cat >files/root/.zshrc<<-EOF
 	# Path to your oh-my-zsh installation.
 	ZSH=\$HOME/.oh-my-zsh
 	# Set name of the theme to load.
@@ -689,7 +688,7 @@ cat >files/root/.zshrc<<-EOF
 	plugins=(git command-not-found extract z docker zsh-syntax-highlighting zsh-autosuggestions zsh-completions)
 	source \$ZSH/oh-my-zsh.sh
 	autoload -U compinit && compinit
-EOF
+	EOF
 }
 status
 
