@@ -293,6 +293,22 @@ clone_all https://github.com/hong0980/build
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
 
+[[ ! "$REPO_BRANCH" =~ 18.06|master ]] && {
+    clone_all https://github.com/sbwml/luci-app-mosdns
+    clone_all https://github.com/sbwml/luci-app-alist
+    git_clone https://github.com/kiddin9/luci-theme-edge
+    git_clone https://github.com/jerrykuku/luci-theme-argon
+    git_clone https://github.com/jerrykuku/luci-app-argon-config
+}
+
+[[ "$REPO_BRANCH" =~ 18.06|master ]] && {
+    clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
+    clone_all lua https://github.com/sbwml/luci-app-alist
+    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
+    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
+    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
+}
+
 [ "$TARGET_DEVICE" != phicomm_k2p -a "$TARGET_DEVICE" != newifi-d2 ] && {
     git_clone https://github.com/zzsj0928/luci-app-pushbot
     git_clone https://github.com/yaof2/luci-app-ikoolproxy
@@ -372,7 +388,6 @@ luci-app-cupsd
 luci-app-openclash
 luci-app-weburl
 luci-app-wol
-luci-theme-opentomato
 axel patch diffutils collectd-mod-ping collectd-mod-thermal wpad-wolfssl
 "
 
