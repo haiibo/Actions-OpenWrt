@@ -245,7 +245,7 @@ status
 [[ -d openwrt ]] && cd openwrt || exit
 echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 
-[[ $REPO_BRANCH == master ]] && sed -i '/luci/s/^#//; /openwrt-23.05/s/^/#/' feeds.conf.default
+[[ $REPO_BRANCH =~ master|18.06 ]] && sed -i '/luci/s/^#//; /openwrt-23.05/s/^/#/' feeds.conf.default
 
 STEP_NAME='生成全局变量'; BEGIN_TIME=$(date '+%H:%M:%S')
 config
