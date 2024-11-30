@@ -340,7 +340,6 @@ cat >>.config <<-EOF
 	CONFIG_PACKAGE_luci-app-diskman=y
 	CONFIG_PACKAGE_luci-app-syncdial=y
 	CONFIG_PACKAGE_luci-theme-bootstrap=y
-	CONFIG_PACKAGE_luci-theme-material=y
 	CONFIG_PACKAGE_luci-app-tinynote=y
 	CONFIG_PACKAGE_luci-app-arpbind=y
 	CONFIG_PACKAGE_luci-app-wifischedule=y
@@ -373,7 +372,6 @@ luci-app-cupsd
 luci-app-openclash
 luci-app-weburl
 luci-app-wol
-luci-theme-material
 luci-theme-opentomato
 axel patch diffutils collectd-mod-ping collectd-mod-thermal wpad-wolfssl
 "
