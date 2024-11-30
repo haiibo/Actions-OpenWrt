@@ -7,14 +7,13 @@ if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
     [[ -d ".ccache" ]] && (ccache=".ccache"; ls -alh .ccache)
     du -h --max-depth=1 ./staging_dir
     du -h --max-depth=1 ./ --exclude=staging_dir
+    [[ -d $GITHUB_WORKSPACE/output ]] || mkdir $GITHUB_WORKSPACE/output
     tar -I zstdmt -cf ../output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
     ls -lh ../output
     [[ -e ../output/$CACHE_NAME.tzst ]] || \
-    echo -e "\e[1;31m打包toolchain失败\e[0m"
+    echo -e "\e[1;31m打包压缩toolchain失败\e[0m"
     exit 0
 fi
-
-[[ -d output ]] || mkdir output
 
 color() {
     case $1 in
@@ -263,7 +262,7 @@ KERNEL_VERSION=$(awk -F '-' '/KERNEL/{print $2}' include/kernel-$KERNEL | awk '{
 echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
 
 TOOLS_HASH=$(git log --pretty=tformat:"%h" -n1 tools toolchain)
-CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-$DEVICE_SUBTARGET-cache-$TOOLS_HASH"
+CACHE_NAME="$SOURCE_REPO-${REPO_BRANCH#*-}-$DEVICE_TARGET-cache-$TOOLS_HASH"
 echo "CACHE_NAME=$CACHE_NAME" >>$GITHUB_ENV
 status
 
@@ -644,6 +643,7 @@ make defconfig 1>/dev/null 2>&1
 status
 
 echo -e "$(color cy 当前编译机型) $(color cb $SOURCE_REPO-${REPO_BRANCH#*-}-$TARGET_DEVICE-$KERNEL_VERSION)"
+
 sed -i "s/\$(VERSION_DIST_SANITIZED)/$SOURCE_REPO-${REPO_BRANCH#*-}-$KERNEL_VERSION/" include/image.mk
 # sed -i "/IMG_PREFIX:/ {s/=/=$SOURCE_NAME-${REPO_BRANCH#*-}-$KERNEL_VERSION-\$(shell date +%y.%m.%d)-/}" include/image.mk
 
