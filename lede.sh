@@ -8,9 +8,9 @@ if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
     du -h --max-depth=1 ./staging_dir
     du -h --max-depth=1 ./ --exclude=staging_dir
     [[ -d $GITHUB_WORKSPACE/output ]] || mkdir $GITHUB_WORKSPACE/output
-    tar -I zstdmt -cf ../output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
-    ls -lh ../output
-    [[ -e ../output/$CACHE_NAME.tzst ]] || \
+    tar -I zstdmt -cf $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
+    ls -lh $GITHUB_WORKSPACE/output
+    [[ -e $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst ]] || \
     echo -e "\e[1;31m打包压缩toolchain失败\e[0m"
     exit 0
 fi
@@ -605,8 +605,9 @@ status
     status
 }
 
-STEP_NAME='下载zsh终端工具'; BEGIN_TIME=$(date '+%H:%M:%S')
+
 [[ $ZSH_TOOL = 'true' ]] && {
+    STEP_NAME='下载zsh终端工具'; BEGIN_TIME=$(date '+%H:%M:%S')
     [[ -d files/root ]] || mkdir -p files/root
     git clone -q https://github.com/ohmyzsh/ohmyzsh files/root/.oh-my-zsh
     git clone -q https://github.com/zsh-users/zsh-autosuggestions files/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions
@@ -624,8 +625,8 @@ STEP_NAME='下载zsh终端工具'; BEGIN_TIME=$(date '+%H:%M:%S')
 	source \$ZSH/oh-my-zsh.sh
 	autoload -U compinit && compinit
 	EOF
+    status
 }
-status
 
 [[ $KERNEL_TARGET ]] && {
     STEP_NAME='下载adguardhome运行内核'; BEGIN_TIME=$(date '+%H:%M:%S')
