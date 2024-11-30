@@ -1,4 +1,4 @@
-name: build-openwrt
+name: build-immortalwrt
 
 on:
   # schedule: [cron: 0 2 */7 * *]
@@ -11,7 +11,7 @@ on:
         required: true
         default: 'immortalwrt'
         type: choice
-        options: [lede, immortalwrt]
+        options: [immortalwrt]
 
       branch:
         description: '选择源码仓库分支'
