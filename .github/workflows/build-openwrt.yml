@@ -210,18 +210,16 @@ jobs:
       id: organize
       if: steps.compile.conclusion == 'success' && !cancelled()
       run: |
-        df -hT
-        cd $OPENWRT_PATH
+        df -hT && cd $OPENWRT_PATH
         echo "======================================"
         du -h --max-depth=1 ./bin
         du -h --max-depth=1 ./build_dir
         du -h --max-depth=1 ./staging_dir
         du -h --max-depth=1 ./ --exclude=bin --exclude=build_dir --exclude=staging_dir --exclude=bin
         echo "======================================"
-        ls bin/targets/*/*
+        ls bin/targets/*/* && ./organize.sh
         echo "======================================"
         cat bin/targets/*/*/config.buildinfo
-        bash organize.sh
 
     - name: Upload Firmware To Artifact
       if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true' && !cancelled()
