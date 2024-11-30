@@ -581,11 +581,11 @@ done
 cat >organize.sh<<-EOF
 	#!/bin/bash
 	[ -d firmware ] || mkdir firmware
-	FILE_NAME=\$SOURCE_REPO-\${REPO_BRANCH#*-}-\$KERNEL_VERSION
-	tar -zcf firmware/\$FILE_NAME-\$DEVICE_TARGET-packages.tar.gz bin/packages
+	FILE_NAME=\$SOURCE_REPO-\${REPO_BRANCH#*-}-\$KERNEL_VERSION-\$DEVICE_TARGET
+	tar -zcf firmware/\$FILE_NAME-packages.tar.gz bin/packages
 	[ \$FIRMWARE_TYPE ] && cp -f \$(find bin/targets/ -type f -name "*\$FIRMWARE_TYPE*") firmware
-	cd firmware && md5sum * >\$FILE_NAME-\$DEVICE_TARGET-md5-config.txt
-	sed '/^$/d' \$OPENWRT_PATH/.config >>\$FILE_NAME-\$DEVICE_TARGET-md5-config.txt
+	cd firmware && md5sum * >\$FILE_NAME-md5-config.txt
+	sed '/^$/d' \$OPENWRT_PATH/.config >>\$FILE_NAME-md5-config.txt
 	# [ \$SOURCE_REPO == immortalwrt ] && \
 	# rename 's/immortalwrt/\${{ env.SOURCE_REPO }}-\${{ env.LITE_BRANCH }}/' * || \
 	# rename 's/openwrt/\${{ env.SOURCE_REPO }}-\${{ env.LITE_BRANCH }}/' *
