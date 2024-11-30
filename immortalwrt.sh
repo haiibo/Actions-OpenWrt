@@ -509,7 +509,6 @@ esac
     #luci-app-alist
     luci-app-weburl
     luci-app-wrtbwmon
-    luci-theme-material
     luci-theme-opentomato
     luci-app-pwdHackDeny
     luci-app-uhttpd
