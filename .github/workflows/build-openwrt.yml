@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       source:
-        description: "选择编译源码仓库"
+        description: '选择编译源码仓库'
         required: true
-        default: "immortalwrt"
+        default: 'immortalwrt'
         type: choice
         options: [lede, immortalwrt]
 
@@ -44,24 +44,24 @@ on:
         type: boolean
 
       zsh_tool:
-        description: "预设zsh终端工具"
+        description: '预设zsh终端工具'
         required: false
         default: true
         type: boolean
 
       openclash:
-        description: "预设openclash内核"
+        description: '预设openclash内核'
         required: false
-        default: "amd64"
+        default: 'amd64'
 
       artifact:
-        description: "上传固件到Artifact"
+        description: '上传固件到Artifact'
         required: false
         default: true
         type: boolean
 
       release:
-        description: "上传固件到Releases"
+        description: '上传固件到Releases'
         required: false
         default: true
         type: boolean
