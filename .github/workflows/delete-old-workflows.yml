@@ -1,4 +1,4 @@
-name: delete older releases and workflows
+name: delete old workflows
 
 on:
   repository_dispatch:
