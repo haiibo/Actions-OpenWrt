@@ -323,12 +323,18 @@ rm -rf feeds/*/*/luci-app-appfilter
     clone_all https://github.com/sbwml/luci-app-mosdns
     clone_all https://github.com/sbwml/luci-app-alist
     git_clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
+    git_clone https://github.com/kiddin9/luci-theme-edge
+    git_clone https://github.com/jerrykuku/luci-theme-argon
+    git_clone https://github.com/jerrykuku/luci-app-argon-config
 }
 
 [[ "$REPO_BRANCH" =~ 18.06 ]] && {
     clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     clone_all lua https://github.com/sbwml/luci-app-alist
     git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
+    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
+    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
+    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
 }
 
 [[ "$REPO_BRANCH" =~ 21.02|18.06 ]] && {
@@ -509,7 +515,6 @@ esac
     #luci-app-alist
     luci-app-weburl
     luci-app-wrtbwmon
-    luci-theme-opentomato
     luci-app-pwdHackDeny
     luci-app-uhttpd
     luci-app-control-webrestriction
