@@ -251,14 +251,17 @@ REPO_URL="https://github.com/immortalwrt/immortalwrt"
 echo "REPO_URL=$REPO_URL" >>$GITHUB_ENV
 STEP_NAME='拉取编译源码'; BEGIN_TIME=$(date '+%H:%M:%S')
 [[ $REPO_BRANCH != "master" ]] && BRANCH="-b $REPO_BRANCH --single-branch"
+#cd /workdir
 git clone -q $BRANCH $REPO_URL openwrt
 status
+#ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 [[ -d openwrt ]] && cd openwrt || exit
 echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
 
 STEP_NAME='生成全局变量'; BEGIN_TIME=$(date '+%H:%M:%S')
 config
 make defconfig 1>/dev/null 2>&1
+
 SOURCE_REPO=$(basename $REPO_URL)
 echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
 echo "LITE_BRANCH=${REPO_BRANCH#*-}" >> $GITHUB_ENV
