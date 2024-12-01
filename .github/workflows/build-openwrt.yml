@@ -150,7 +150,11 @@ jobs:
       uses: actions/checkout@v4.2.0
 
     - name: Load Compile Script
-      run: chmod +x $SOURCE_REPO.sh && ./$SOURCE_REPO.sh
+      run: |
+        chmod +x $SOURCE_REPO.sh && ./$SOURCE_REPO.sh
+        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+        RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
+        echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
 
     - name: Compile Toolchain
       id: toolchain
@@ -159,9 +163,6 @@ jobs:
         cd $OPENWRT_PATH
         make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
         $GITHUB_WORKSPACE/$SOURCE_REPO.sh
-        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
-        echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
 
     - name: Delete Old Toolchain
       if: steps.toolchain.conclusion == 'success' && !cancelled()
