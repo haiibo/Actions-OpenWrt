@@ -388,10 +388,15 @@ cat >>.config <<-EOF
 	# CONFIG_LUCI_CSSTIDY is not set #压缩 CSS 文件
 EOF
 
+_packages "
+luci-theme-argon
+luci-app-argon-config
+"
+
 config_generate="package/base-files/files/bin/config_generate"
 wget -qO package/base-files/files/etc/banner git.io/JoNK8
-sed -i "/DISTRIB_DESCRIPTION/ {s/'$/-$SOURCE_REPO-$(date +%Y年%m月%d日)'/}" package/*/*/*/openwrt_release
-sed -i "/VERSION_NUMBER/ s/if.*/if \$(VERSION_NUMBER),\$(VERSION_NUMBER),${REPO_BRANCH#*-}-SNAPSHOT)/" include/version.mk
+#sed -i "/DISTRIB_DESCRIPTION/ {s/'$/-$SOURCE_REPO-$(date +%Y年%m月%d日)'/}" package/*/*/*/openwrt_release
+#sed -i "/VERSION_NUMBER/ s/if.*/if \$(VERSION_NUMBER),\$(VERSION_NUMBER),${REPO_BRANCH#*-}-SNAPSHOT)/" include/version.mk
 sed -i "s/ImmortalWrt/OpenWrt/g" {$config_generate,include/version.mk}
 sed -i "/listen_https/ {s/^/#/g}" package/*/*/*/files/uhttpd.config
 sed -i "\$i uci -q set luci.main.mediaurlbase=\"/luci-static/bootstrap\" && uci -q commit luci\nuci -q set upnpd.config.enabled=\"1\" && uci -q commit upnpd\nsed -i 's/root::.*:::/root:\$1\$V4UetPzk\$CYXluq4wUazHjmCDBCqXF.::0:99999:7:::/g' /etc/shadow" $(find package/emortal/ -type f -regex '.*default-settings$')
@@ -546,8 +551,6 @@ esac
     [[ "$REPO_BRANCH" =~ 2.*0 ]] && {
         sed -i 's/^ping/-- ping/g' package/*/*/*/*/*/bridge.lua
     } || {
-        _packages "luci-app-argon-config"
-        sed -i "s/argonv3/argon/" feeds/luci/applications/luci-app-argon-config/Makefile
         for d in $(find feeds/ package/ -type f -name "index.htm" 2>/dev/null); do
             if grep -q "Kernel Version" $d; then
                 sed -i 's|os.date(.*|os.date("%F %X") .. " " .. translate(os.date("%A")),|' $d
