@@ -217,7 +217,7 @@ jobs:
         du -h --max-depth=1 ./staging_dir
         du -h --max-depth=1 ./ --exclude=bin --exclude=build_dir --exclude=staging_dir --exclude=bin
         echo "======================================"
-        ls bin/targets/*/* && ./organize.sh
+        ls bin/targets/*/* && bash organize.sh
         echo "======================================"
         cat bin/targets/*/*/config.buildinfo
 
