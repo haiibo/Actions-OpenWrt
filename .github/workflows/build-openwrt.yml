@@ -146,7 +146,7 @@ jobs:
         sudo mount -o compress=zstd $LV_NAME $GITHUB_WORKSPACE
         sudo chown -R runner:runner $GITHUB_WORKSPACE && df -hT
 
-    - name: Checkout Repo
+    - name: Checkout
       uses: actions/checkout@v4.2.0
 
     - name: Load Compile Script
