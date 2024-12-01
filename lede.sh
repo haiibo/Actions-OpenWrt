@@ -544,11 +544,10 @@ sed -i '/8.8/d' $mwan3
 # tee -a {$(_find "package/ feeds/" "luci-app-vssr")/*/*/*/status_top.htm,$(_find "package/ feeds/" "luci-app-ssr-plus")/*/*/*/status.htm,$(_find "package/ feeds/" "luci-app-bypass")/*/*/*/status.htm,$(_find "package/ feeds/" "luci-app-passwall")/*/*/*/global/status.htm} >/dev/null
 xb=$(_find "package/ feeds/" "luci-app-bypass")
 [[ -d $xb ]] && sed -i 's/default y/default n/g' $xb/Makefile
+xc=$(_find "package/ feeds/" "qBittorrent-static")
 qBittorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*-\K\d+\.\d+\.\d+')
 libtorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*v\K\d+\.\d+\.\d+')
-xc=$(_find "package/ feeds/" "qBittorrent-static")
-[[ -d $xc ]] && [[ $qBittorrent_version ]] && \
-    sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=${qBittorrent_version:-4.6.5}_v${libtorrent_version:-2.0.10}/" $xc/Makefile
+[[ -d $xc ]] && [[ $qBittorrent_version ]] && sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=${qBittorrent_version:-4.6.5}_v${libtorrent_version:-2.0.10}/" $xc/Makefile
 xd=$(_find "package/ feeds/" "luci-app-turboacc")
 [[ -d $xd ]] && sed -i '/hw_flow/s/1/0/;/sfe_flow/s/1/0/;/sfe_bridge/s/1/0/' $xd/root/etc/config/turboacc
 xe=$(_find "package/ feeds/" "luci-app-ikoolproxy")
