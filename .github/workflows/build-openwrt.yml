@@ -129,7 +129,7 @@ jobs:
         sudo -E apt-get -y clean) &
         sudo -E timedatectl set-timezone "$TZ"
 
-    - name: Create Combine Disks
+    - name: Combine Disks
       run: |
         MNT_SIZE=$((($(df --block-size=1024 --output=avail /mnt | tail -1) - 1024*1024*1) * 1024))
         sudo fallocate -l $MNT_SIZE /mnt/mnt.img
