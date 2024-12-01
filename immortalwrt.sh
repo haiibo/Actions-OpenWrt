@@ -559,17 +559,14 @@ esac
 
     xb=$(_find "package/ feeds/" "luci-app-bypass")
     [[ -d $xb ]] && sed -i 's/default y/default n/g' $xb/Makefile
+    xc=$(_find "package/ feeds/" "qBittorrent-static")
     qBittorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*-\K\d+\.\d+\.\d+')
     libtorrent_version=$(curl -sL api.github.com/repos/userdocs/qbittorrent-nox-static/releases/latest | grep -oP 'tag_name.*v\K\d+\.\d+\.\d+')
-    xc=$(_find "package/ feeds/" "qBittorrent-static")
-    [[ -d $xc ]] && {
-        sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=${qBittorrent_version:-4.6.5}_v${libtorrent_version:-2.0.10}/" $xc/Makefile
-    }
+    [[ -d $xc ]] && sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=${qBittorrent_version:-4.6.5}_v${libtorrent_version:-2.0.10}/" $xc/Makefile
     xd=$(_find "package/ feeds/" "luci-app-turboacc")
     [[ -d $xd ]] && sed -i '/hw_flow/s/1/0/;/sfe_flow/s/1/0/;/sfe_bridge/s/1/0/' $xd/root/etc/config/turboacc
     xe=$(_find "package/ feeds/" "luci-app-ikoolproxy")
-    [[ -f $xe/luasrc/model/cbi/koolproxy/basic.lua ]] && sed -i \
-        '/^local.*sys.exec/ s/$/ or 0/g; /^local.*sys.exec/ s/.txt/.txt 2>\/dev\/null/g' $xe/luasrc/model/cbi/koolproxy/basic.lua
+    [[ -f $xe/luasrc/model/cbi/koolproxy/basic.lua ]] && sed -i '/^local.*sys.exec/ s/$/ or 0/g; /^local.*sys.exec/ s/.txt/.txt 2>\/dev\/null/g' $xe/luasrc/model/cbi/koolproxy/basic.lua
     xg=$(_find "package/ feeds/" "luci-app-pushbot")
     [[ -d $xg ]] && {
         sed -i "s|-c pushbot|/usr/bin/pushbot/pushbot|" $xg/luasrc/controller/pushbot.lua
