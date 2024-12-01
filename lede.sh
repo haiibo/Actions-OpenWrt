@@ -348,7 +348,6 @@ cat >>.config <<-EOF
 	CONFIG_PACKAGE_luci-app-ttyd=y
 	CONFIG_PACKAGE_luci-app-upnp=y
 	CONFIG_PACKAGE_luci-app-ikoolproxy=y
-	CONFIG_PACKAGE_luci-app-wizard=y
 	CONFIG_PACKAGE_luci-app-simplenetwork=y
 	CONFIG_PACKAGE_luci-app-opkg=y
 	CONFIG_PACKAGE_automount=y
@@ -378,7 +377,6 @@ luci-app-hd-idle
 luci-app-pushbot
 luci-app-eqos
 luci-app-softwarecenter
-luci-app-log-OpenWrt-19.07
 luci-app-transmission
 luci-app-usb-printer
 luci-app-vssr
@@ -390,6 +388,13 @@ luci-app-weburl
 luci-app-wol
 axel patch diffutils collectd-mod-ping collectd-mod-thermal wpad-wolfssl
 "
+
+[[ ! "$REPO_BRANCH" =~ 18.06|master ]] && {
+    _packages "
+    luci-app-wizard
+    luci-app-log-OpenWrt-19.07
+    "
+}
 
 config_generate="package/base-files/files/bin/config_generate"
 wget -qO package/base-files/files/etc/banner git.io/JoNK8
@@ -507,8 +512,8 @@ case "$TARGET_DEVICE" in
 esac
 
 if [[ $REPO_URL =~ "coolsnowwolf" ]]; then
-    sed -i "/DISTRIB_DESCRIPTION/ {s/'$/-$SOURCE_REPO-$(date +%Y年%m月%d日)'/}" package/*/*/*/openwrt_release
-    sed -i "/VERSION_NUMBER/ s/if.*/if \$(VERSION_NUMBER),\$(VERSION_NUMBER),${REPO_BRANCH#*-}-SNAPSHOT)/" include/version.mk
+    # sed -i "/DISTRIB_DESCRIPTION/ {s/'$/-$SOURCE_REPO-$(date +%Y年%m月%d日)'/}" package/*/*/*/openwrt_release
+    # sed -i "/VERSION_NUMBER/ s/if.*/if \$(VERSION_NUMBER),\$(VERSION_NUMBER),${REPO_BRANCH#*-}-SNAPSHOT)/" include/version.mk
     sed -i 's/option enabled.*/option enabled 1/' feeds/*/*/*/*/upnpd.config
     sed -i "/listen_https/ {s/^/#/g}" package/*/*/*/files/uhttpd.config
     sed -i 's/UTC/UTC-8/' Makefile
