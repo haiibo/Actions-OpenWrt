@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
-    echo -e "\e[1;33m开始打包toolchain\e[0m"
+    echo -e "\e[1;33m开始打包toolchain目录\e[0m"
     cd $OPENWRT_PATH
     sed -i 's/ $(tool.*\/stamp-compile)//' Makefile
     [[ -d ".ccache" ]] && (ccache=".ccache"; ls -alh .ccache)
@@ -272,7 +272,7 @@ status
 #CACHE_URL=$(curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
 curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | grep -oP 'download_url": "\K[^"]*cache[^"]*' >cache_url
 if (grep -q "$CACHE_NAME" cache_url); then
-    STEP_NAME='下载toolchain编译工具'; BEGIN_TIME=$(date '+%H:%M:%S')
+    STEP_NAME='下载toolchain缓存文件'; BEGIN_TIME=$(date '+%H:%M:%S')
     wget -qc -t=3 $(grep "$CACHE_NAME" cache_url)
     [ -e *.tzst ]; status
     STEP_NAME='部署toolchain编译工具'; BEGIN_TIME=$(date '+%H:%M:%S')
