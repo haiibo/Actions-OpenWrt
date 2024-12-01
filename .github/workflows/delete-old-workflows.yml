@@ -5,49 +5,49 @@ on:
   workflow_dispatch:
     inputs:
       delete_releases:
-        description: "删除Releases文件"
+        description: '删除Releases文件'
         required: true
         default: true
         type: boolean
 
       delete_tags:
-        description: "删除Releases标签"
+        description: '删除Releases标签'
         required: false
         default: true
         type: boolean
 
       releases_keep_latest:
-        description: "保留最新Releases数量"
+        description: '保留最新Releases数量'
         required: false
-        default: "2"
+        default: '2'
         type: choice
         options: [30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 
       releases_keep_keyword:
-        description: "保留Releases关键字"
+        description: '保留Releases关键字'
         required: false
-        default: "toolchain/lede/immortalwrt"
+        default: 'toolchain'
 
       delete_workflows:
-        description: "删除Workflows记录"
+        description: '删除Workflows记录'
         required: true
         default: true
         type: boolean
 
       workflows_keep_day:
-        description: "保留Workflows天数"
+        description: '保留Workflows天数'
         required: false
-        default: "1"
+        default: '1'
         type: choice
         options: [30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 
       workflows_keep_keyword:
-        description: "保留Workflows关键字"
+        description: '保留Workflows关键字'
         required: false
-        default: ""
+        default: ''
 
       out_log:
-        description: "输出详细JSON日志"
+        description: '输出详细JSON日志'
         required: false
         default: true
         type: boolean
