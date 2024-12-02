@@ -177,6 +177,7 @@ config() {
 			# CONFIG_GRUB_EFI_IMAGES is not set
 			# CONFIG_VMDK_IMAGES is not set
 			EOF
+      			KERNEL_TARGET=amd64
 			;;
 		"r1-plus-lts"|"r1-plus"|"r4s"|"r2c"|"r2s")
 			cat >.config<<-EOF
@@ -195,6 +196,7 @@ config() {
 			"r4s"|"r2c"|"r2s")
 			echo "CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-$TARGET_DEVICE=y" >>.config ;;
 			esac
+      			KERNEL_TARGET=arm64
 			;;
 		"newifi-d2")
 			cat >.config<<-EOF
@@ -223,6 +225,7 @@ config() {
 			CONFIG_TARGET_armvirt_64=y
 			CONFIG_TARGET_armvirt_64_DEVICE_generic=y
 			EOF
+      			KERNEL_TARGET=arm64
 			;;
 	esac
 }
