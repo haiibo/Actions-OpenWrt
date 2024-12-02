@@ -607,7 +607,7 @@ cat >organize.sh<<-EOF
 EOF
 status
 
-[[ $CLASH_KERNEL ]] && {
+[[ $CLASH_KERNEL = 'true' && $KERNEL_TARGET ]] && {
     STEP_NAME='下载openchash运行内核'; BEGIN_TIME=$(date '+%H:%M:%S')
     [[ -d files/etc/openclash/core ]] || mkdir -p files/etc/openclash/core
     CLASH_META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-$CLASH_KERNEL.tar.gz"
@@ -645,7 +645,7 @@ status
     status
 }
 
-[[ $CLASH_KERNEL ]] && {
+[[ $CLASH_KERNEL = 'true' && $KERNEL_TARGET ]] && {
     STEP_NAME='下载adguardhome运行内核'; BEGIN_TIME=$(date '+%H:%M:%S')
     [[ -d files/usr/bin/AdGuardHome ]] || mkdir -p files/usr/bin/AdGuardHome
     AGH_CORE="https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_$CLASH_KERNEL.tar.gz"
