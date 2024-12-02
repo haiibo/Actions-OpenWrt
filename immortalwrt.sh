@@ -335,6 +335,7 @@ else
     git_clone https://github.com/kiddin9/luci-theme-edge
     git_clone https://github.com/jerrykuku/luci-theme-argon
     git_clone https://github.com/jerrykuku/luci-app-argon-config
+    #clone_dir openwrt-23.05 https://github.com/coolsnowwolf/luci luci-app-adguardhome
 fi
 
 [[ "$REPO_BRANCH" =~ 21.02|18.06 ]] && {
