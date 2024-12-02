@@ -406,7 +406,7 @@ case "$TARGET_DEVICE" in
         sed -i '/n) ipad/s/".*"/"192.168.2.1"/' $config_generate
         _packages "
         luci-app-adbyby-plus
-        #luci-app-adguardhome
+        luci-app-adguardhome
         luci-app-passwall2
         #luci-app-amule
         luci-app-dockerman
@@ -438,7 +438,7 @@ case "$TARGET_DEVICE" in
         luci-app-passwall2
         luci-app-netdata
         luci-app-cpufreq
-        #luci-app-adguardhome
+        luci-app-adguardhome
         #luci-app-amule
         luci-app-deluge
         #luci-app-smartdns
