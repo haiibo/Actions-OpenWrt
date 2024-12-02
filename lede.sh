@@ -300,7 +300,6 @@ clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
 clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
 clone_all https://github.com/destan19/OpenAppFilter
 clone_all https://github.com/brvphoenix/wrtbwmon
-clone_all https://github.com/linkease/istore-ui
 clone_all https://github.com/linkease/istore luci
 clone_all https://github.com/ophub/luci-app-amlogic
 git_clone https://github.com/sbwml/packages_lang_golang golang
