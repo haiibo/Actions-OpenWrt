@@ -300,18 +300,21 @@ STEP_NAME='更新&安装插件'; BEGIN_TIME=$(date '+%H:%M:%S')
 status
 
 color cy "添加&替换插件"
-clone_all https://github.com/hong0980/build
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
 clone_all https://github.com/xiaorouji/openwrt-passwall
 clone_all https://github.com/xiaorouji/openwrt-passwall2
 clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
+
+clone_all https://github.com/hong0980/build
 clone_dir https://github.com/coolsnowwolf/packages qtbase qttools qBittorrent qBittorrent-static bandwidthd
-clone_dir https://github.com/kiddin9/kwrt-packages luci-lib-taskd luci-lib-xterm luci-app-store taskd luci-app-bypass luci-app-pushbot
+clone_dir https://github.com/kiddin9/kwrt-packages luci-app-bypass luci-app-pushbot
 git_clone https://github.com/sbwml/packages_lang_golang golang
 git_clone https://github.com/ilxp/luci-app-ikoolproxy
 git_clone https://github.com/AlexZhuo/luci-app-bandwidthd
 clone_all https://github.com/destan19/OpenAppFilter
+clone_all https://github.com/linkease/istore luci
+clone_all https://github.com/ophub/luci-app-amlogic
 rm -rf feeds/*/*/luci-app-appfilter
 
 if [[ "$REPO_BRANCH" =~ 18.06 ]]; then
