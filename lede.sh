@@ -305,21 +305,19 @@ git_clone https://github.com/yaof2/luci-app-ikoolproxy
 git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
 sed -i '/log_check/s/^/#/' $(_find "package/ feeds/" "luci-app-unblockneteasemusic")/root/etc/init.d/unblockneteasemusic
 
-[[ ! "$REPO_BRANCH" =~ 18.06|master ]] && {
-    clone_all https://github.com/sbwml/luci-app-mosdns
-    clone_all https://github.com/sbwml/luci-app-alist
-    git_clone https://github.com/kiddin9/luci-theme-edge
-    git_clone https://github.com/jerrykuku/luci-theme-argon
-    git_clone https://github.com/jerrykuku/luci-app-argon-config
-}
-
-[[ "$REPO_BRANCH" =~ 18.06|master ]] && {
+if [[ "$REPO_BRANCH" =~ 18.06|master ]]; then
     clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     clone_all lua https://github.com/sbwml/luci-app-alist
     git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
     git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
     git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
-}
+else
+    clone_all https://github.com/sbwml/luci-app-mosdns
+    clone_all https://github.com/sbwml/luci-app-alist
+    git_clone https://github.com/kiddin9/luci-theme-edge
+    git_clone https://github.com/jerrykuku/luci-theme-argon
+    git_clone https://github.com/jerrykuku/luci-app-argon-config
+fi
 
 STEP_NAME='加载个人设置'; BEGIN_TIME=$(date '+%H:%M:%S')
 
