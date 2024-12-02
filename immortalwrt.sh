@@ -314,7 +314,15 @@ git_clone https://github.com/AlexZhuo/luci-app-bandwidthd
 clone_all https://github.com/destan19/OpenAppFilter
 rm -rf feeds/*/*/luci-app-appfilter
 
-[[ ! "$REPO_BRANCH" =~ 18.06 ]] && {
+
+if [[ "$REPO_BRANCH" =~ 18.06 ]]; then
+    clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
+    clone_all lua https://github.com/sbwml/luci-app-alist
+    git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
+    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
+    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
+    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
+else
     git_clone https://github.com/immortalwrt/homeproxy luci-app-homeproxy
     clone_all https://github.com/morytyann/OpenWrt-mihomo
     clone_all https://github.com/brvphoenix/luci-app-wrtbwmon
@@ -325,16 +333,7 @@ rm -rf feeds/*/*/luci-app-appfilter
     git_clone https://github.com/kiddin9/luci-theme-edge
     git_clone https://github.com/jerrykuku/luci-theme-argon
     git_clone https://github.com/jerrykuku/luci-app-argon-config
-}
-
-[[ "$REPO_BRANCH" =~ 18.06 ]] && {
-    clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
-    clone_all lua https://github.com/sbwml/luci-app-alist
-    git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
-    git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
-    git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
-    git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
-}
+fi
 
 [[ "$REPO_BRANCH" =~ 21.02|18.06 ]] && {
     clone_dir https://github.com/immortalwrt/packages nghttp3 ngtcp2 bash
