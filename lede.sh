@@ -299,6 +299,7 @@ clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
 clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
 clone_all https://github.com/destan19/OpenAppFilter
 clone_all https://github.com/brvphoenix/wrtbwmon
+git_clone https://github.com/sbwml/packages_lang_golang golang
 git_clone https://github.com/zzsj0928/luci-app-pushbot
 git_clone https://github.com/yaof2/luci-app-ikoolproxy
 git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
