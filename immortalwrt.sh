@@ -302,6 +302,7 @@ status
 color cy "添加&替换插件"
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
+clone_dir https://github.com/sbwml/openwrt_helloworld shadowsocks-rust
 clone_all https://github.com/xiaorouji/openwrt-passwall
 clone_all https://github.com/xiaorouji/openwrt-passwall2
 clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
