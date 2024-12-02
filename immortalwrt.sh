@@ -303,12 +303,11 @@ color cy "添加&替换插件"
 clone_all https://github.com/hong0980/build
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
+clone_all https://github.com/xiaorouji/openwrt-passwall
+clone_all https://github.com/xiaorouji/openwrt-passwall2
 clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-clone_dir https://github.com/sbwml/openwrt_helloworld shadowsocks-rust
-clone_dir https://github.com/xiaorouji/openwrt-passwall luci-app-passwall
-clone_dir https://github.com/xiaorouji/openwrt-passwall2 luci-app-passwall2
 clone_dir https://github.com/coolsnowwolf/packages qtbase qttools qBittorrent qBittorrent-static bandwidthd
-clone_dir https://github.com/kiddin9/kwrt-packages luci-lib-taskd luci-lib-xterm luci-app-bypass luci-app-store luci-app-pushbot taskd
+clone_dir https://github.com/kiddin9/kwrt-packages luci-lib-taskd luci-lib-xterm luci-app-store taskd luci-app-bypass luci-app-pushbot
 git_clone https://github.com/sbwml/packages_lang_golang golang
 git_clone https://github.com/ilxp/luci-app-ikoolproxy
 git_clone https://github.com/AlexZhuo/luci-app-bandwidthd
@@ -391,6 +390,7 @@ EOF
 _packages "
 luci-theme-argon
 luci-app-argon-config
+luci-app-zerotier
 "
 
 config_generate="package/base-files/files/bin/config_generate"
