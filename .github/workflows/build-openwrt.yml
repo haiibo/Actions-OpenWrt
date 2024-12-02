@@ -52,7 +52,8 @@ on:
       openclash:
         description: '预设openclash内核'
         required: false
-        default: 'amd64'
+        default: true
+        type: boolean
 
       artifact:
         description: '上传固件到Artifact'
