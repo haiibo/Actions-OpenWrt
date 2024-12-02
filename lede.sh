@@ -317,10 +317,9 @@ if [[ "$REPO_BRANCH" =~ 18.06|master ]]; then
     git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
     git_clone https://github.com/ximiTech/luci-app-msd_lite
     git_clone https://github.com/ximiTech/msd_lite
-    git_clone https://github.com/kongfl888/luci-app-adguardhome
+    #git_clone https://github.com/kongfl888/luci-app-adguardhome
     clone_dir https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom luci-theme-infinityfreedom-ng
     clone_dir https://github.com/haiibo/packages luci-theme-opentomcat
-    git_clone https://github.com/kongfl888/luci-app-adguardhome
 else
     clone_all https://github.com/sbwml/luci-app-mosdns
     clone_all https://github.com/sbwml/luci-app-alist
