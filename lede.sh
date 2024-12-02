@@ -382,6 +382,7 @@ luci-app-adguardhome
 luci-app-openclash
 luci-app-weburl
 luci-app-wol
+luci-app-zerotier
 axel patch diffutils collectd-mod-ping collectd-mod-thermal wpad-wolfssl
 "
 
