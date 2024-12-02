@@ -292,6 +292,17 @@ color cy "添加&替换插件"
 clone_all https://github.com/hong0980/build
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
+clone_all https://github.com/xiaorouji/openwrt-passwall
+clone_all https://github.com/xiaorouji/openwrt-passwall2
+clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
+clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
+clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
+clone_all https://github.com/destan19/OpenAppFilter
+clone_all https://github.com/brvphoenix/wrtbwmon
+git_clone https://github.com/zzsj0928/luci-app-pushbot
+git_clone https://github.com/yaof2/luci-app-ikoolproxy
+git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
+sed -i '/log_check/s/^/#/' $(_find "package/ feeds/" "luci-app-unblockneteasemusic")/root/etc/init.d/unblockneteasemusic
 
 [[ ! "$REPO_BRANCH" =~ 18.06|master ]] && {
     clone_all https://github.com/sbwml/luci-app-mosdns
@@ -307,21 +318,6 @@ clone_all https://github.com/xiaorouji/openwrt-passwall-packages
     git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
     git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
     git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
-}
-
-[ "$TARGET_DEVICE" != phicomm_k2p -a "$TARGET_DEVICE" != newifi-d2 ] && {
-    git_clone https://github.com/zzsj0928/luci-app-pushbot
-    git_clone https://github.com/yaof2/luci-app-ikoolproxy
-    clone_all https://github.com/destan19/OpenAppFilter
-    # clone_dir https://github.com/sbwml/openwrt_helloworld xray-core v2ray-core v2ray-geodata sing-box
-    clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
-    clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
-    clone_dir https://github.com/xiaorouji/openwrt-passwall luci-app-passwall
-    clone_dir https://github.com/xiaorouji/openwrt-passwall2 luci-app-passwall2
-    clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
-    clone_all https://github.com/brvphoenix/wrtbwmon
-    git_clone master https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic
-    sed -i '/log_check/s/^/#/' $(_find "package/ feeds/" "luci-app-unblockneteasemusic")/root/etc/init.d/unblockneteasemusic
 }
 
 STEP_NAME='加载个人设置'; BEGIN_TIME=$(date '+%H:%M:%S')
