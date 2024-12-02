@@ -153,9 +153,7 @@ jobs:
       run: |
         chmod +x $SOURCE_REPO.sh && ./$SOURCE_REPO.sh
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        #RANDOM=$$$(date +%s); rand=$[$RANDOM % ${#Emoji[@]}]
         echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >>$GITHUB_ENV
-        #echo "EMOJI=${Emoji[$rand]}" >>$GITHUB_ENV
 
     - name: Compile Toolchain
       id: toolchain
