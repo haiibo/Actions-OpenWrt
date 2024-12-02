@@ -289,12 +289,13 @@ STEP_NAME='更新&安装插件'; BEGIN_TIME=$(date '+%H:%M:%S')
 status
 
 color cy "添加&替换插件"
-clone_all https://github.com/hong0980/build
 clone_all https://github.com/fw876/helloworld
 clone_all https://github.com/xiaorouji/openwrt-passwall-packages
 clone_all https://github.com/xiaorouji/openwrt-passwall
 clone_all https://github.com/xiaorouji/openwrt-passwall2
 clone_dir https://github.com/vernesong/OpenClash luci-app-openclash
+
+clone_all https://github.com/hong0980/build
 clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
 clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
 clone_all https://github.com/destan19/OpenAppFilter
