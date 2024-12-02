@@ -299,6 +299,9 @@ clone_dir https://github.com/sirpdboy/luci-app-cupsd luci-app-cupsd cups
 clone_dir https://github.com/kiddin9/kwrt-packages luci-app-adguardhome adguardhome luci-app-bypass lua-neturl cpulimit
 clone_all https://github.com/destan19/OpenAppFilter
 clone_all https://github.com/brvphoenix/wrtbwmon
+clone_all https://github.com/linkease/istore-ui
+clone_all https://github.com/linkease/istore luci
+clone_all https://github.com/ophub/luci-app-amlogic
 git_clone https://github.com/sbwml/packages_lang_golang golang
 git_clone https://github.com/zzsj0928/luci-app-pushbot
 git_clone https://github.com/yaof2/luci-app-ikoolproxy
@@ -308,9 +311,16 @@ sed -i '/log_check/s/^/#/' $(_find "package/ feeds/" "luci-app-unblockneteasemus
 if [[ "$REPO_BRANCH" =~ 18.06|master ]]; then
     clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     clone_all lua https://github.com/sbwml/luci-app-alist
+    clone_all https://github.com/sirpdboy/luci-app-ddns-go
     git_clone 18.06 https://github.com/kiddin9/luci-theme-edge
     git_clone 18.06 https://github.com/jerrykuku/luci-theme-argon
     git_clone 18.06 https://github.com/jerrykuku/luci-app-argon-config
+    git_clone https://github.com/ximiTech/luci-app-msd_lite
+    git_clone https://github.com/ximiTech/msd_lite
+    git_clone https://github.com/kongfl888/luci-app-adguardhome
+    clone_dir https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom luci-theme-infinityfreedom-ng
+    clone_dir https://github.com/haiibo/packages luci-theme-opentomcat
+    git_clone https://github.com/kongfl888/luci-app-adguardhome
 else
     clone_all https://github.com/sbwml/luci-app-mosdns
     clone_all https://github.com/sbwml/luci-app-alist
