@@ -379,7 +379,7 @@ luci-app-usb-printer
 luci-app-vssr
 luci-app-bypass
 luci-app-cupsd
-#luci-app-adguardhome
+luci-app-adguardhome
 luci-app-openclash
 luci-app-weburl
 luci-app-wol
