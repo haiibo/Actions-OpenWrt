@@ -314,7 +314,6 @@ git_clone https://github.com/AlexZhuo/luci-app-bandwidthd
 clone_all https://github.com/destan19/OpenAppFilter
 rm -rf feeds/*/*/luci-app-appfilter
 
-
 if [[ "$REPO_BRANCH" =~ 18.06 ]]; then
     clone_all v5-lua https://github.com/sbwml/luci-app-mosdns
     clone_all lua https://github.com/sbwml/luci-app-alist
