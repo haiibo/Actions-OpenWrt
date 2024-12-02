@@ -610,7 +610,7 @@ status
 [[ $CLASH_KERNEL = 'true' && $KERNEL_TARGET ]] && {
     STEP_NAME='下载openchash运行内核'; BEGIN_TIME=$(date '+%H:%M:%S')
     [[ -d files/etc/openclash/core ]] || mkdir -p files/etc/openclash/core
-    CLASH_META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-$CLASH_KERNEL.tar.gz"
+    CLASH_META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-$KERNEL_TARGET.tar.gz"
     GEOIP_URL="https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat"
     GEOSITE_URL="https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat"
     COUNTRY_URL="https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb"
@@ -648,7 +648,7 @@ status
 [[ $CLASH_KERNEL = 'true' && $KERNEL_TARGET ]] && {
     STEP_NAME='下载adguardhome运行内核'; BEGIN_TIME=$(date '+%H:%M:%S')
     [[ -d files/usr/bin/AdGuardHome ]] || mkdir -p files/usr/bin/AdGuardHome
-    AGH_CORE="https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_$CLASH_KERNEL.tar.gz"
+    AGH_CORE="https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_$KERNEL_TARGET.tar.gz"
     wget -qO- $AGH_CORE | tar xOz > files/usr/bin/AdGuardHome/AdGuardHome
     chmod +x files/usr/bin/AdGuardHome/AdGuardHome
     status
