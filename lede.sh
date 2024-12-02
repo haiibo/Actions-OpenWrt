@@ -354,15 +354,12 @@ cat >>.config <<-EOF
 	CONFIG_PACKAGE_luci-app-tinynote=y
 	CONFIG_PACKAGE_luci-app-arpbind=y
 	CONFIG_PACKAGE_luci-app-wifischedule=y
-	# CONFIG_PACKAGE_luci-app-unblockmusic is not set
 	# CONFIG_PACKAGE_luci-app-wireguard is not set
 	# CONFIG_PACKAGE_luci-app-autoreboot is not set
 	# CONFIG_PACKAGE_luci-app-ddns is not set
 	# CONFIG_PACKAGE_luci-app-ssr-plus is not set
-	# CONFIG_PACKAGE_luci-app-zerotier is not set
 	# CONFIG_PACKAGE_luci-app-ipsec-vpnd is not set
 	# CONFIG_PACKAGE_luci-app-xlnetacc is not set
-	# CONFIG_PACKAGE_luci-app-uugamebooster is not set
 EOF
 
 _packages "
