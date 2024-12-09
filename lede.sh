@@ -9,8 +9,7 @@ if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
     du -h --max-depth=1 ./ --exclude=staging_dir
     tar -I zstdmt -cf $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
     ls -lh $GITHUB_WORKSPACE/output
-    [ -e $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst ] || \
-    echo -e "\e[1;31m打包压缩toolchain失败\e[0m"
+    [ -e $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst ] || exit 1
     exit 0
 fi
 
