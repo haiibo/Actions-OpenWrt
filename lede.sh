@@ -10,7 +10,7 @@ if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
     tar -I zstdmt -cf $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
     ls -lh $GITHUB_WORKSPACE/output
     [ -e $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst ] || \
-    echo -e "\e[1;31m打包压缩toolchain失败\e[0m"
+    echo -e "\e[1;31m打包压缩toolchain失败\e[0m" && exit 1
     exit 0
 fi
 
@@ -275,7 +275,7 @@ status
 
 #CACHE_URL=$(curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | awk -F '"' '/download_url/{print $4}' | grep $CACHE_NAME)
 curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | grep -oP 'download_url": "\K[^"]*cache[^"]*' >xa
-curl -sL api.github.com/repos/haiibo/toolchain-cache/releases | grep -oP 'download_url": "\K[^"]*cache[^"]*' >xc
+curl -sL api.github.com/repos/$GITHUB_REPOSITORY/releases | grep -oP 'download_url": "\K[^"]*cache[^"]*' >xc
 if (grep -q $CACHE_NAME xa || grep -q $CACHE_NAME xc); then
     STEP_NAME='下载toolchain缓存文件'; BEGIN_TIME=$(date '+%H:%M:%S')
     grep -q $CACHE_NAME xa && wget -qc -t=3 $(grep $CACHE_NAME xa) || wget -qc -t=3 $(grep $CACHE_NAME xc)
