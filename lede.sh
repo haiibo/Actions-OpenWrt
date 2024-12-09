@@ -8,8 +8,10 @@ if [[ $REBUILD_TOOLCHAIN = 'true' ]]; then
     du -h --max-depth=1 ./staging_dir
     du -h --max-depth=1 ./ --exclude=staging_dir
     tar -I zstdmt -cf $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst staging_dir/host* staging_dir/tool* $ccache
-    ls -lh $GITHUB_WORKSPACE/output
-    [ -e $GITHUB_WORKSPACE/output/$CACHE_NAME.tzst ] || exit 1
+    if [[ $(du -sm $GITHUB_WORKSPACE/output | cut -f1) -ge 150 ]]; then
+        ls -lh $GITHUB_WORKSPACE/output
+        echo "OUTPUT_RELEASE=true" >>$GITHUB_ENV
+    fi
     exit 0
 fi
 

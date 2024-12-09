@@ -165,7 +165,7 @@ jobs:
         $GITHUB_WORKSPACE/$SOURCE_REPO.sh
 
     - name: Delete Old Toolchain
-      if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
+      if: env.OUTPUT_RELEASE == 'true'
       uses: mknejp/delete-release-assets@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -175,7 +175,7 @@ jobs:
         fail-if-no-release: false
 
     - name: Upload Toolchain To Release
-      if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
+      if: env.OUTPUT_RELEASE == 'true'
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} toolchain-cache ${{ env.EMOJI }}
