@@ -25,7 +25,7 @@ on:
         required: true
         default: 'x86_64'
         type: choice
-        options: [x86_64, r1-plus-lts, r2c, r2s, r4s, newifi-d2, asus_rt-n16, phicomm_k2p, armvirt-64-default]
+        options: [x86_64, r1-plus-lts, r2c, r2s, r4s, newifi-d2, asus_rt-n16, phicomm_k2p, armvirt-64]
 
       ip:
         description: '设置默认登录IP'
@@ -165,7 +165,7 @@ jobs:
         $GITHUB_WORKSPACE/$SOURCE_REPO.sh
 
     - name: Delete Old Toolchain
-      if: steps.toolchain.conclusion == 'success' && !cancelled()
+      if: env.OUTPUT_RELEASE == 'true'
       uses: mknejp/delete-release-assets@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -175,7 +175,7 @@ jobs:
         fail-if-no-release: false
 
     - name: Upload Toolchain To Release
-      if: steps.toolchain.conclusion == 'success' && !cancelled()
+      if: env.OUTPUT_RELEASE == 'true'
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} toolchain-cache ${{ env.EMOJI }}
@@ -201,7 +201,7 @@ jobs:
         echo "FILE_DATE=$(date +%Y.%m.%d)" >>$GITHUB_ENV
 
     - name: Upload Bin Directory
-      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN_DIR == 'true' && !cancelled()
+      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN_DIR == 'true'
       uses: actions/upload-artifact@v4.4.0
       with:
         name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.TARGET_DEVICE }}-bin-${{ env.FILE_DATE }}
@@ -209,7 +209,7 @@ jobs:
 
     - name: Organize Files
       id: organize
-      if: steps.compile.conclusion == 'success' && !cancelled()
+      if: steps.compile.conclusion == 'success'
       run: |
         df -hT && cd $OPENWRT_PATH
         echo "======================================"
@@ -223,14 +223,14 @@ jobs:
         cat bin/targets/*/*/config.buildinfo
 
     - name: Upload Firmware To Artifact
-      if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true' && !cancelled()
+      if: steps.compile.conclusion == 'success' && github.event.inputs.artifact == 'true'
       uses: actions/upload-artifact@main
       with:
         name: ${{ env.SOURCE_REPO }}-${{ env.LITE_BRANCH }}-${{ env.TARGET_DEVICE }}-firmware-${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE_PATH }}
 
     - name: Upload Firmware To Release
-      if: steps.organize.conclusion == 'success' && github.event.inputs.release == 'true' && !cancelled()
+      if: steps.organize.conclusion == 'success' && github.event.inputs.release == 'true'
       uses: softprops/action-gh-release@v2.0.8
       with:
         name: ${{ env.EMOJI }} ${{ env.FILE_DATE }} ${{ env.SOURCE_REPO }}-${{ env.TARGET_DEVICE }} ${{ env.EMOJI }}
